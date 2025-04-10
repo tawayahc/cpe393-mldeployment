@@ -68,7 +68,7 @@ def predict():
 
 
 ## ✅ Exercise 2: Handle Multiple Inputs
-> **Task:** - Allow the `/predict` endpoint to accept a list of inputs.
+> **Task** - Allow the `/predict` endpoint to accept a list of inputs.
 
 **Input Example:**
 ```json
@@ -99,3 +99,57 @@ def predict():
 
 **Output Screenshot**
 > ![Exercise 2](images/exercise_2.png)
+
+
+## ✅ Exercise 3: Add Input Validation
+
+> **Task** - Ensure that:
+> - The "features" key exists
+> - Each input has exactly 4 float values
+> - Invalid input returns a clear error message with HTTP 400
+
+**Updated Function**
+```python
+@app.route("/predict", methods=["POST"])
+def predict():
+     data = request.get_json()
+
+     # Added: Check if request has no JSON data
+     if not data:
+          return jsonify({ "error": "No input data provided" }), 400
+
+     # Added: Check if "features" key is missing in the request
+     if "features" not in data:
+          return jsonify({ "error": '"features" key is missing' }), 400
+
+     # Added: Validate that "features" is a list of lists with exactly 4 numeric values each
+     features = data["features"]
+     if not isinstance(features, list) or not all(
+          isinstance(row, list) and len(row) == 4 and all (isinstance(x, (int, float)) for x in row)
+          for row in features
+     ):
+          return jsonify({ "error": 'Each item in "features" must be a list of exactly 4 numbers values' }), 400
+
+     input_features = np.array(features)
+     predictions = iris_model.predict(input_features)
+     return jsonify({ "prediction": predictions.tolist() })
+```
+
+**Output Screenshot**
+> ![](images/exercise_3_1.png)
+> *Figure 1: Exercise 3 - Valid Input*
+
+> ![](images/exercise_3_2.png)
+> *Figure 2: Exercise 3 - Invalid (Non-numeric value)*
+
+> ![](images/exercise_3_3.png)
+> *Figure 3: Exercise 3 - Invalid (Too many values)*
+
+> ![](images/exercise_3_4.png)
+> *Figure 4: Exercise 3 - Invalid (Too few values)*
+
+> ![](images/exercise_3_5.png)
+> *Figure 5: Exercise 3 - Invalid (Empty request body)*
+
+> ![](images/exercise_3_6.png)
+> *Figure 6: Exercise 3 - Invalid (Missing "features" key)*
