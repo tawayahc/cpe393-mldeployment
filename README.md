@@ -65,3 +65,37 @@ def predict():
 
 **Output Screenshot**
 > ![Exercise 1](images/exercise_1.png)
+
+
+## ✅ Exercise 2: Handle Multiple Inputs
+> **Task:** - Allow the `/predict` endpoint to accept a list of inputs.
+
+**Input Example:**
+```json
+{
+  "features": [
+    [5.1, 3.5, 1.4, 0.2],
+    [6.2, 3.4, 5.4, 2.3]
+  ]
+}
+```
+
+**Expected Output Example:**
+```json
+{
+  "predictions": [0, 2]
+}
+```
+
+**Updated Function**
+```python
+@app.route("/predict", methods=["POST"])
+def predict():
+    data = request.get_json()
+    input_features = np.array(data["features"])             # Fixed: Convert feature list into NumPy array 
+    predictions = iris_model.predict(input_features)        # Fixed: Batch prediction
+    return jsonify({ "prediction": predictions.tolist() })  # Fixed: Convert NumPy array back to list
+```
+
+**Output Screenshot**
+> ![Exercise 2](images/exercise_2.png)
