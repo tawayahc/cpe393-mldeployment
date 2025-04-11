@@ -2,6 +2,11 @@
 
 ## ⚙️ Setup Project
 
+**Install packages listed in a `requirements.txt` file**
+```
+pip install -r requirements.txt
+```
+
 **Model Export** - Run `iris_train.py` (`iris_model.pkl` will be saved in models folder)
 ```
 python scripts/iris_train.py
@@ -175,3 +180,93 @@ def health_check():
 
 **Output Screenshot**
 > ![Exercise 4](images/exercise_4.png)
+
+
+## ✅ Exercise 5: Dockerize Your Own Model
+> **Task** - Train a new model on a provided housing dataset and deploy it using the same Docker structure. The task is to build a regression model to predict the housing price.
+
+**Create Python script for training the model** - create a `housing_train.py` Python file in `scipts/` folder
+
+**Added Script in a `housing_train.py` file** - Create Random Forest Regressor for house price prediction
+```python
+import pickle
+import pandas as pd
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.pipeline import Pipeline
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_squared_error, r2_score
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.compose import ColumnTransformer
+
+housing_dataset = pd.read_csv("data/housing_dataset.csv")
+X = housing_dataset.drop("price", axis=1)
+y = housing_dataset["price"]
+
+categorical_cols = [
+    "mainroad", "guestroom", "basement", "hotwaterheating",
+    "airconditioning", "prefarea", "furnishingstatus"
+]
+numerical_cols = [
+    "area", "bedrooms", "bathrooms",
+    "stories", "parking"
+]
+
+preprocessor = ColumnTransformer(transformers=[
+    ("num", StandardScaler(), numerical_cols),
+    ("cat", OneHotEncoder(drop="first"), categorical_cols)
+])
+
+pipeline = Pipeline(steps=[
+    ("preprocessor", preprocessor),
+    ("regressor", RandomForestRegressor(n_estimators=100, random_state=42))
+])
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+pipeline.fit(X_train, y_train)
+
+with open("models/housing_model.pkl", "wb") as f:
+    pickle.dump(pipeline, f)
+```
+
+**Model Export** - Run `housing_train.py` (`housing_model.pkl` will be saved in models folder)
+```
+python scripts/housing_train.py
+```
+
+**Load Model** - Load `housing_model.pkl` for house price prediction
+```python
+import pickle
+
+with open("models/housing_model.pkl", "rb") as f:
+     housing_model = pickle.load(f)
+```
+
+**Create Endpoint** - Create `/predict/house_price` for house price prediction
+```python
+@app.route("/predict/house_price", methods=["POST"])
+def predict_house_price():
+     data = request.get_json()
+
+     if not data:
+          return jsonify({ "error": "No input data provided" }), 400
+
+     if "features" not in data:
+          return jsonify({ "error": '"features" key is missing' }), 400
+
+     features = data["features"]
+     if not isinstance(features, list) or not all(
+          isinstance(row, list) and len(row) == 12 for row in features
+     ):
+          return jsonify({ "error": 'Each item in "features" must be a list of exactly 12 values' }), 400
+
+     column_names = [
+          "area", "bedrooms", "bathrooms", "stories", "parking", "mainroad", "guestroom",
+          "basement", "hotwaterheating", "airconditioning", "prefarea", "furnishingstatus"
+     ]
+     df = pd.DataFrame(features, columns=column_names)
+     predictions = housing_model.predict(df)
+     return jsonify({ "prediction": predictions.tolist() })
+```
+
+**Output Screenshot**
+> ![Exercise 5](images/exercise_5.png)
