@@ -11,6 +11,10 @@ with open("models/iris_model.pkl", "rb") as f:
 def home():
     return "ML Model is Running"
 
+@app.route("/health", methods=["GET"])
+def health_check():
+    return jsonify({ "status": "ok" }), 200
+
 @app.route("/predict", methods=["POST"])
 def predict():
     data = request.get_json()

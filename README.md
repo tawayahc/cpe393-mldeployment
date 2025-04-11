@@ -136,20 +136,42 @@ def predict():
 ```
 
 **Output Screenshot**
-> ![](images/exercise_3_1.png)
+> ![Exercise 3 - Valid Input](images/exercise_3_1.png)
 > *Figure 1: Exercise 3 - Valid Input*
 
-> ![](images/exercise_3_2.png)
+> ![Exercise 3 - Invalid (Non-numeric value)](images/exercise_3_2.png)
 > *Figure 2: Exercise 3 - Invalid (Non-numeric value)*
 
-> ![](images/exercise_3_3.png)
+> ![Exercise 3 - Invalid (Too many values)](images/exercise_3_3.png)
 > *Figure 3: Exercise 3 - Invalid (Too many values)*
 
-> ![](images/exercise_3_4.png)
+> ![Exercise 3 - Invalid (Too few values)](images/exercise_3_4.png)
 > *Figure 4: Exercise 3 - Invalid (Too few values)*
 
-> ![](images/exercise_3_5.png)
+> ![Exercise 3 - Invalid (Empty request body)](images/exercise_3_5.png)
 > *Figure 5: Exercise 3 - Invalid (Empty request body)*
 
-> ![](images/exercise_3_6.png)
+> ![Exercise 3 - Invalid (Missing "features" key)](images/exercise_3_6.png)
 > *Figure 6: Exercise 3 - Invalid (Missing "features" key)*
+
+
+## ✅ Exercise 4: Add Health Check Endpoint
+> **Task** - Add an endpoint `/health` that returns a simple JSON indicating the API is live
+
+**Expected Output Example:**
+```json
+{
+  "status": "ok"
+}
+```
+
+**Added Function**
+```python
+# Added: Define a health check endpoint at /health
+@app.route("/health", methods=["GET"])
+def health_check():
+     return jsonify({ "status": "ok" }), 200
+```
+
+**Output Screenshot**
+> ![Exercise 4](images/exercise_4.png)
