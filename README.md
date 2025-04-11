@@ -1,28 +1,78 @@
 # **CPE393 ML DEPLOYMENT LAB**
+This project is part of the **CPE393 Machine Learning Deployment Lab**, focused on deploying machine learning models using Python, Flask, and Docker. The project demonstrates how to build, train, and serve ML models via RESTful APIs.
+
+## 🌟 Key Features
+- Iris Classification Model
+     - Trained using `scikit-learn`
+     - Exposes a `/predict/iris` endpoint for Iris classification
+     - Handles single or batch input with validation
+- Housing Price Prediction Model
+     - Trained on `housing_dataset.csv` using `RandomForestRegressor`
+     - Exposes a `/predict/house_price` endpoint for predicting housing prices
+     - Supports categorical and numerical features via preprocessing pipeline
+     - Accepts batch inputs and validates format
+- Health Check
+     - `/health` endpoint to verify the service is running
+
+## 📬 Available Endpoints
+|        Endpoint        | Method |              Description              |
+|------------------------|--------|---------------------------------------|
+| `/health`              |  GET   | Health check to verify API is running |
+| `/predict/iris`        |  POST  | Predict Iris flower class             |
+| `/predict/house_price` |  POST  | Predict housing price                 |
+
+## 🛠️ Tech Stack
+- Python, Flask, scikit-learn
+- Docker for containerization
+- Postman / cURL for testing
+- One-hot encoding + scaling via `Pipeline`
+
+## 📁 Project Structure
+```
+CPE393-MLDEPLOYMENT/
+├── app/
+│   └── app.py                   # Flask application with API endpoints
+├── data/
+│   └── housing_dataset.csv      # Dataset for housing price prediction
+├── homework/
+│   └── homework.md              # Homework-related notes or exercises
+├── images/
+│   └── *.png                    # Screenshots for README and exercises
+├── models/
+│   ├── iris_model.pkl           # Trained model for iris classification
+│   └── housing_model.pkl        # Trained model for housing price regression
+├── scripts/
+│   ├── iris_train.py            # Training script for iris model
+│   └── housing_train.py         # Training script for housing model
+├── .gitignore                   # Git ignored files
+├── Dockerfile                   # Docker configuration file
+├── LICENSE                      # License info
+├── README.md                    # Project documentation
+└── requirements.txt             # Python dependencies
+```
 
 ## ⚙️ Setup Project
-
-**Install packages listed in a `requirements.txt` file**
+**1. Install packages listed in a `requirements.txt` file**
 ```
 pip install -r requirements.txt
 ```
 
-**Model Export** - Run `iris_train.py` (`iris_model.pkl` will be saved in models folder)
+**2. Model Export** - Run `iris_train.py` (`iris_model.pkl` will be saved in models folder)
 ```
 python scripts/iris_train.py
 ```
 
-**Build Docker image**
+**3. Build Docker image**
 ```
 docker build -t ml-model .
 ```
 
-**Run Docker container**
+**4. Run Docker container**
 ```
 docker run -p 9000:9000 ml-model
 ```
 
-**Test the API in new terminal or Postman**
+**5. Test the API in new terminal or Postman**
 ```
 curl -X POST http://localhost:9000/predict \
      -H "Content-Type: application/json" \
@@ -270,3 +320,14 @@ def predict_house_price():
 
 **Output Screenshot**
 > ![Exercise 5](images/exercise_5.png)
+
+
+## ✅ Exercise 6: Write a README
+> **Task** - Create a `README.md` that includes:
+> - Project description
+> - Setup steps
+> - Sample API request and response
+
+**Output Screenshot**
+> ![Exercise 6](images/exercise_6.png)
+> *This `README.md` is the documentation for project description, setup steps, and sample API request and response screenshot from Postman*
